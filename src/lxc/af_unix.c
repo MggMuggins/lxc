@@ -61,6 +61,14 @@ int lxc_abstract_unix_open(const char *path, int type, int flags)
 	if (fd < 0)
 		return -1;
 
+	struct linger optval = {
+		.l_onoff = 1,
+		.l_linger = 3,
+	};
+	ret = setsockopt(fd, SOL_SOCKET, SO_LINGER, &optval, sizeof(optval));
+	if (ret < 0)
+		return -1;
+
 	if (!path)
 		return move_fd(fd);
 
